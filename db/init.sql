@@ -40,14 +40,6 @@ CREATE TABLE InKindDonation (
     FOREIGN KEY (donationid) REFERENCES Donation(donationid)
 );
 
-CREATE TABLE Volunteer (
-    userid INT PRIMARY KEY,
-    volunteered DATE NOT NULL,
-    operationtype ENUM('relief', 'rescue') NOT NULL,
-    availability ENUM('yes', 'no') NOT NULL,
-    FOREIGN KEY (userid) REFERENCES User(id)
-);
-
 CREATE TABLE Mission (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -67,17 +59,6 @@ CREATE TABLE MissionResources (
     FOREIGN KEY (missionid) REFERENCES Mission(id),
     FOREIGN KEY (donationid) REFERENCES MonetaryDonation(donationid)
 );
-
-CREATE TABLE MissionReports (
-    reportid INT AUTO_INCREMENT PRIMARY KEY,
-    missionid INT NOT NULL,
-    userid INT NOT NULL,
-    report_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    report_text TEXT,
-    FOREIGN KEY (missionid) REFERENCES Mission(id),
-    FOREIGN KEY (userid) REFERENCES User(id)
-);
-
 
 CREATE TABLE MissionVolunteers (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -167,9 +148,6 @@ VALUES ('Test Mission', 'EARTHQUAKE', 'Manila', 'ongoing', '2024-12-01', 'relief
 INSERT INTO MissionResources (missionid, donationid, resource_type)
 VALUES 
     (19, 1, 'monetary');
-
-INSERT INTO MissionReports (missionid, userid, report_date, report_text)
-VALUES (19, 1, '2024-12-10', 'Mission is progressing well'); 
 
 INSERT INTO MissionVolunteers (missionid, userid)
 VALUES
