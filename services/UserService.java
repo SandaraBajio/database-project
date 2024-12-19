@@ -24,4 +24,9 @@ public class UserService {
     public List<User> listUsers() throws SQLException {
         return userDAO.getAllUsers();
     }
+
+    // Method to show user info excluding email and password
+    public User showUserInfo(int userId) throws SQLException {
+        return userDAO.showUserInfo(userId);
+    }
 }

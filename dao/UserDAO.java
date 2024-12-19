@@ -15,16 +15,15 @@ public class UserDAO {
 
     // Register a new user
     public void registerUser(User user) throws SQLException {
-        String query = "INSERT INTO User (email, password, firstname, lastname, middlename, age, role, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO User (email, password, first_name, last_name, age, role, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setString(1, user.getEmail());
             pstmt.setString(2, user.getPassword());
             pstmt.setString(3, user.getFirstname());
             pstmt.setString(4, user.getLastname());
-            pstmt.setString(5, user.getMiddlename());
-            pstmt.setInt(6, user.getAge());
-            pstmt.setString(7, user.getRole());
-            pstmt.setString(8, user.getPhoneNumber());
+            pstmt.setInt(5, user.getAge());
+            pstmt.setString(6, user.getRole());
+            pstmt.setString(7, user.getPhoneNumber());
             pstmt.executeUpdate();
         }
     }
@@ -42,9 +41,8 @@ public class UserDAO {
                         rs.getInt("id"),
                         rs.getString("email"),
                         rs.getString("password"),
-                        rs.getString("firstname"),
-                        rs.getString("lastname"),
-                        rs.getString("middlename"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
                         rs.getInt("age"),
                         rs.getString("role"),
                         rs.getString("phone_number")
@@ -67,9 +65,8 @@ public class UserDAO {
                         rs.getInt("id"),
                         rs.getString("email"),
                         rs.getString("password"),
-                        rs.getString("firstname"),
-                        rs.getString("lastname"),
-                        rs.getString("middlename"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
                         rs.getInt("age"),
                         rs.getString("role"),
                         rs.getString("phone_number")
@@ -81,17 +78,16 @@ public class UserDAO {
 
     // Update user details
     public void updateUser(int userId, User updatedUser) throws SQLException {
-        String query = "UPDATE User SET email = ?, password = ?, firstname = ?, lastname = ?, middlename = ?, age = ?, role = ?, phone_number = ? WHERE id = ?";
+        String query = "UPDATE User SET email = ?, password = ?, first_name = ?, last_name = ?, age = ?, role = ?, phone_number = ? WHERE id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setString(1, updatedUser.getEmail());
             pstmt.setString(2, updatedUser.getPassword());
             pstmt.setString(3, updatedUser.getFirstname());
             pstmt.setString(4, updatedUser.getLastname());
-            pstmt.setString(5, updatedUser.getMiddlename());
-            pstmt.setInt(6, updatedUser.getAge());
-            pstmt.setString(7, updatedUser.getRole());
-            pstmt.setString(8, updatedUser.getPhoneNumber());
-            pstmt.setInt(9, userId);
+            pstmt.setInt(5, updatedUser.getAge());
+            pstmt.setString(6, updatedUser.getRole());
+            pstmt.setString(7, updatedUser.getPhoneNumber());
+            pstmt.setInt(8, userId);
             pstmt.executeUpdate();
         }
     }
@@ -103,5 +99,28 @@ public class UserDAO {
             pstmt.setInt(1, userId);
             pstmt.executeUpdate();
         }
+    }
+
+    // Show user information excluding email and password
+    public User showUserInfo(int userId) throws SQLException {
+        String query = "SELECT first_name, last_name, age, role, phone_number FROM User WHERE id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return new User(
+                        userId, // Keep the user ID for reference
+                        null,   // Don't retrieve email
+                        null,   // Don't retrieve password
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getInt("age"),
+                        rs.getString("role"),
+                        rs.getString("phone_number")
+                );
+            }
+        }
+        return null; // User not found
     }
 }

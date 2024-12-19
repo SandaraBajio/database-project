@@ -72,9 +72,6 @@ public class Menu {
         System.out.print("Enter last name: ");
         String lastname = scanner.nextLine();
 
-        System.out.print("Enter middle name: ");
-        String middlename = scanner.nextLine();
-
         System.out.print("Enter age: ");
         int age = scanner.nextInt();
         scanner.nextLine();
@@ -82,7 +79,7 @@ public class Menu {
         System.out.print("Enter phone number: ");
         String phoneNumber = scanner.nextLine();
 
-        User user = new User(0, email, password, firstname, lastname, middlename, age, role, phoneNumber);
+        User user = new User(0, email, password, firstname, lastname, age, role, phoneNumber);
         try {
             userService.registerUser(user);
             System.out.println("Registration successful!");
@@ -107,6 +104,7 @@ public class Menu {
                 User user = userService.login(email, password);
                 if (user != null) {
                     System.out.println("Login successful! Welcome, " + user.getFirstname());
+
                     if (user.getRole().equalsIgnoreCase("donate")) {
                         showDonationMenu(user);
                     } else if (user.getRole().equalsIgnoreCase("volunteer")) {
@@ -201,8 +199,8 @@ public class Menu {
             ResultSet rs = volunteerService.getAllVolunteers();
             while (rs.next()) {
                 int userId = rs.getInt("id");
-                String firstName = rs.getString("firstname");
-                String lastName = rs.getString("lastname");
+                String firstName = rs.getString("firs_tname");
+                String lastName = rs.getString("last_name");
                 System.out.println("User ID: " + userId + ", Name: " + firstName + " " + lastName);
             }
 
@@ -332,8 +330,6 @@ public class Menu {
         String firstname = scanner.nextLine();
         System.out.print("Enter new last name: ");
         String lastname = scanner.nextLine();
-        System.out.print("Enter new middle name: ");
-        String middlename = scanner.nextLine();
         System.out.print("Enter new age: ");
         int age = scanner.nextInt();
         scanner.nextLine();
@@ -342,7 +338,7 @@ public class Menu {
         System.out.print("Enter new phone number: ");
         String phoneNumber = scanner.nextLine();
 
-        User updatedUser = new User(0, email, password, firstname, lastname, middlename, age, role, phoneNumber);
+        User updatedUser = new User(0, email, password, firstname, lastname, age, role, phoneNumber);
         adminService.updateUser(userId, updatedUser);
     }
 
@@ -613,6 +609,111 @@ private void deleteMission() {
     }
 }
 
+public void addMissionResources() {
+    String insertMissionResourcesSql = 
+        "INSERT INTO MissionResources (missionid, donationid, resource_type) VALUES (?, ?, ?)";
+    String updateMonetaryStatusSql = 
+        "UPDATE MonetaryDonation SET status = 'distributed' WHERE donationid = ?";
+    String updateInKindStatusSql = 
+        "UPDATE InKindDonation SET status = 'distributed' WHERE donationid = ?";
+    Scanner scanner = new Scanner(System.in);
+
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement insertStmt = conn.prepareStatement(insertMissionResourcesSql);
+         PreparedStatement updateMonetaryStmt = conn.prepareStatement(updateMonetaryStatusSql);
+         PreparedStatement updateInKindStmt = conn.prepareStatement(updateInKindStatusSql)) {
+
+        // Display available Mission IDs
+        System.out.println("\nAvailable Mission IDs:");
+        String getMissionIdsSql = "SELECT id FROM Mission";
+        try (PreparedStatement missionStmt = conn.prepareStatement(getMissionIdsSql)) {
+            ResultSet missionRs = missionStmt.executeQuery();
+            while (missionRs.next()) {
+                System.out.println("Mission ID: " + missionRs.getInt("id"));
+            }
+        }
+
+        System.out.print("\nEnter Mission ID: ");
+        int missionId = scanner.nextInt();
+        scanner.nextLine();  // Consume the newline left by nextInt()
+
+        // Display available Donation IDs
+        System.out.println("\nAvailable Donation IDs:");
+        String getDonationIdsSql = "SELECT donationid FROM MonetaryDonation WHERE status != 'distributed' UNION SELECT donationid FROM InKindDonation WHERE status != 'distributed'";
+        try (PreparedStatement donationStmt = conn.prepareStatement(getDonationIdsSql)) {
+            ResultSet donationRs = donationStmt.executeQuery();
+            while (donationRs.next()) {
+                System.out.println("Donation ID: " + donationRs.getInt("donationid"));
+            }
+        }
+
+        System.out.print("\nEnter Donation ID: ");
+        int donationId = scanner.nextInt();
+        scanner.nextLine();  // Consume the newline left by nextInt()
+
+        System.out.print("Enter Resource Type (monetary/inkind): ");
+        String resourceType = scanner.nextLine().toLowerCase();
+
+        // Check if the donation is already distributed
+        boolean isDistributed = false;
+        if (resourceType.equals("monetary")) {
+            // Check if the donationId is already distributed in the MonetaryDonation table
+            String checkMonetaryStatusSql = "SELECT status FROM MonetaryDonation WHERE donationid = ?";
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkMonetaryStatusSql)) {
+                checkStmt.setInt(1, donationId);
+                ResultSet rs = checkStmt.executeQuery();
+                if (rs.next()) {
+                    String status = rs.getString("status");
+                    if ("distributed".equalsIgnoreCase(status)) {
+                        isDistributed = true;
+                    }
+                }
+            }
+        } else if (resourceType.equals("inkind")) {
+            // Check if the donationId is already distributed in the InKindDonation table
+            String checkInKindStatusSql = "SELECT status FROM InKindDonation WHERE donationid = ?";
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkInKindStatusSql)) {
+                checkStmt.setInt(1, donationId);
+                ResultSet rs = checkStmt.executeQuery();
+                if (rs.next()) {
+                    String status = rs.getString("status");
+                    if ("distributed".equalsIgnoreCase(status)) {
+                        isDistributed = true;
+                    }
+                }
+            }
+        }
+
+        // If the donation is already distributed, do not allow insertion
+        if (isDistributed) {
+            System.out.println("This donation has already been distributed and cannot be used again.");
+            return;
+        }
+
+        // Proceed with the insertion if the donation is not distributed
+        insertStmt.setInt(1, missionId);
+        insertStmt.setInt(2, donationId);  // Set the donation ID
+        insertStmt.setString(3, resourceType);
+        insertStmt.executeUpdate();
+
+        // Update the status of the donation based on resource type
+        if (resourceType.equals("monetary")) {
+            updateMonetaryStmt.setInt(1, donationId);
+            updateMonetaryStmt.executeUpdate();
+        } else if (resourceType.equals("inkind")) {
+            updateInKindStmt.setInt(1, donationId);
+            updateInKindStmt.executeUpdate();
+        }
+
+        System.out.println("Mission resources added successfully!");
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    } catch (Exception e) {
+        System.out.println("Invalid input. Please try again.");
+        e.printStackTrace();
+    }
+}
 
 
 }
