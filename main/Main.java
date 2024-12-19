@@ -1,6 +1,6 @@
 package main;
 
-import controllers.Menu;
+import controllers.*;
 import dao.UserDAO;
 import services.*;
 import utils.DatabaseConnection;
@@ -18,8 +18,10 @@ public class Main {
             DonationService donationService = new DonationService(connection);
             MissionService missionService = new MissionService(connection);
             VolunteerService volunteerService = new VolunteerService(connection);
+            ConsoleDesignImpl consoleDesign = new ConsoleDesignImpl(); // Create an instance of ConsoleDesign
 
-            Menu menu = new Menu(userService, adminService, donationService, missionService, volunteerService);
+            // Pass the ConsoleDesign instance to the Menu constructor
+            Menu menu = new Menu(userService, adminService, donationService, missionService, volunteerService, consoleDesign);
             menu.showWelcomeMenu();
 
         } catch (Exception e) {

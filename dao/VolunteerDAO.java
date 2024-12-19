@@ -44,20 +44,31 @@ public class VolunteerDAO {
 
     // Method to assign a volunteer to a mission
     public void assignVolunteerToMission(int missionId, int userId) throws SQLException {
-        String query = "UPDATE MissionVolunteers SET userid = ? WHERE missionid = ? AND userid IS NULL LIMIT 1";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, userId);
-            stmt.setInt(2, missionId);
-            int rowsUpdated = stmt.executeUpdate();
-            if (rowsUpdated == 0) {
-                throw new SQLException("No unassigned volunteers for this mission.");
+        String query = "SELECT COUNT(*) FROM MissionVolunteers WHERE missionid = ? AND userid IS NULL";
+        try (PreparedStatement countStmt = connection.prepareStatement(query)) {
+            countStmt.setInt(1, missionId);
+            ResultSet rs = countStmt.executeQuery();
+            if (rs.next() && rs.getInt(1) > 0) {
+                // There is at least one unassigned volunteer slot
+                String updateQuery = "UPDATE MissionVolunteers SET userid = ? WHERE missionid = ? AND userid IS NULL LIMIT 1";
+                try (PreparedStatement stmt = connection.prepareStatement(updateQuery)) {
+                    stmt.setInt(1, userId);
+                    stmt.setInt(2, missionId);
+                    int rowsUpdated = stmt.executeUpdate();
+                    if (rowsUpdated == 0) {
+                        throw new SQLException("No unassigned volunteers for this mission.");
+                    }
+                }
+            } else {
+                throw new SQLException("No unassigned volunteer slots available for this mission.");
             }
         }
     }
+    
 
     // Method to get all volunteers for the admin to choose from
     public ResultSet getAllVolunteers() throws SQLException {
-        String query = "SELECT id, firstname, lastname FROM User WHERE role = 'volunteer'";
+        String query = "SELECT id, first_name, last_name FROM User WHERE role = 'volunteer'";
         Statement stmt = connection.createStatement();
         return stmt.executeQuery(query);
     }

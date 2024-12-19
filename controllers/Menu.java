@@ -21,41 +21,57 @@ public class Menu {
     private final DonationService donationService;
     private final MissionService missionService;
     private final VolunteerService volunteerService;
+    private final ConsoleDesign consoleDesign;
     private final Scanner scanner;
+    
 
-    public Menu(UserService userService, AdminService adminService, DonationService donationService, MissionService missionService, VolunteerService volunteerService) {
+    public Menu(UserService userService, AdminService adminService, DonationService donationService, MissionService missionService, VolunteerService volunteerService, ConsoleDesign consoleDesign) {
         this.userService = userService;
         this.adminService = adminService;
         this.donationService = donationService;
         this.missionService = missionService;
         this.volunteerService = volunteerService;
+        this.consoleDesign = consoleDesign;
         this.scanner = new Scanner(System.in);
     }
 
     // --- Welcome Menu ---
     public void showWelcomeMenu() {
-        int choice;
-        do {
-            System.out.println("\n=== Welcome Menu ===");
-            System.out.println("1. Register");
-            System.out.println("2. Log In as User");
-            System.out.println("3. Log In as Admin");
-            System.out.println("4. Exit");
-            System.out.print("Enter your choice: ");
-            choice = scanner.nextInt();
-            scanner.nextLine();
+        consoleDesign.printLogo();
+        boolean exit = false;
 
-            switch (choice) {
-                case 1 -> register();
-                case 2 -> login();
-                case 3 -> adminLogin();
-                case 4 -> System.out.println("Exiting... Goodbye!");
-                default -> System.out.println("Invalid choice. Please try again.");
+        consoleDesign.setColor("yellow");
+        System.out.println("             Together, We Rebuild Stronger.");
+        while(!exit){
+        int choice = -1;
+        do {
+            try {
+                consoleDesign.setColor("magenta");
+                System.out.println("\n=== Main Menu ===");
+                System.out.println("1. Register");
+                System.out.println("2. Log In as User");
+                System.out.println("3. Log In as Admin");
+                System.out.println("4. Exit");
+                System.out.print("Enter your choice: ");
+                choice = Integer.parseInt(scanner.nextLine());
+    
+                switch (choice) {
+                    case 1 -> register();
+                    case 2 -> login();
+                    case 3 -> adminLogin();
+                    case 4 -> System.out.println("Exiting... Goodbye!");
+                    default -> System.out.println("Invalid choice. Please try again.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number between 1 and 4.");
             }
-        } while (choice != 3);
+        } while (choice != 4);
     }
+}
 
     private void register() {
+        
+        consoleDesign.setColor("magenta");
         System.out.println("\n=== Register ===");
         System.out.print("Choose role (donate/volunteer): ");
         String role = scanner.nextLine();
@@ -89,6 +105,8 @@ public class Menu {
     }
 
     private void login() {
+        
+        consoleDesign.setColor("magenta");
         System.out.println("\n=== Log In ===");
         System.out.print("Enter email: ");
         String email = scanner.nextLine();
@@ -122,6 +140,8 @@ public class Menu {
     }
 
     public void adminLogin() {
+        
+        consoleDesign.setColor("magenta");
         System.out.println("\n=== Log In ===");
         System.out.print("Enter email: ");
         String email = scanner.nextLine();
@@ -144,6 +164,8 @@ public class Menu {
     private void showDonationMenu(User user) {
         int choice;
         do {
+            
+            consoleDesign.setColor("magenta");
             System.out.println("\n=== Donation Menu ===");
             System.out.println("1. Make a Donation");
             System.out.println("2. Log Out");
@@ -163,6 +185,8 @@ public class Menu {
     private void showVolunteerMenu(User user) {
         int choice;
         do {
+            
+            consoleDesign.setColor("magenta");
             System.out.println("\n=== Volunteer Menu ===");
             System.out.println("1. View Assigned Mission");
             System.out.println("2. Log Out");
@@ -180,6 +204,8 @@ public class Menu {
 
      // Method to view a volunteer's assigned mission
     public void viewAssignedMission() {
+        
+        consoleDesign.setColor("magenta");
         System.out.print("Enter Volunteer User ID: ");
         int userId = scanner.nextInt();
         try {
@@ -192,6 +218,8 @@ public class Menu {
 
     // Method to assign a volunteer to a mission
     public void assignVolunteerToMission() {
+        
+        consoleDesign.setColor("magenta");
         System.out.print("Enter Mission ID: ");
         int missionId = scanner.nextInt();
         System.out.println("Select Volunteer from the following list:");
@@ -199,7 +227,7 @@ public class Menu {
             ResultSet rs = volunteerService.getAllVolunteers();
             while (rs.next()) {
                 int userId = rs.getInt("id");
-                String firstName = rs.getString("firs_tname");
+                String firstName = rs.getString("first_name");
                 String lastName = rs.getString("last_name");
                 System.out.println("User ID: " + userId + ", Name: " + firstName + " " + lastName);
             }
@@ -214,6 +242,8 @@ public class Menu {
     }
 
     private void makeDonation(User user) {
+        
+        consoleDesign.setColor("magenta");
         System.out.println("\n=== Make a Donation ===");
         System.out.print("Choose donation type (monetary/inkind): ");
         String type = scanner.nextLine();
@@ -264,6 +294,8 @@ public class Menu {
 
     // --- Admin Menu ---
     private void showAdminMenu() {
+        
+        consoleDesign.setColor("magenta");
         int choice;
         do {
             System.out.println("\n=== Admin Menu ===");
@@ -294,6 +326,8 @@ public class Menu {
     private void manageUsers() {
         int choice;
         do {
+            
+            consoleDesign.setColor("magenta");
             System.out.println("\n=== Manage Users ===");
             System.out.println("1. View All Users");
             System.out.println("2. Update User");
@@ -318,6 +352,8 @@ public class Menu {
     }
 
     private void updateUser() throws SQLException {
+        
+        consoleDesign.setColor("magenta");
         System.out.print("Enter User ID to update: ");
         int userId = scanner.nextInt();
         scanner.nextLine();
@@ -343,6 +379,8 @@ public class Menu {
     }
 
     private void deleteUser() throws SQLException {
+        
+        consoleDesign.setColor("magenta");
         System.out.print("Enter User ID to delete: ");
         int userId = scanner.nextInt();
         scanner.nextLine();
@@ -355,6 +393,8 @@ public class Menu {
 private void manageDonations() {
     boolean running = true;
     while (running) {
+        
+        consoleDesign.setColor("magenta");
         System.out.println("\nDonation Manager");
         System.out.println("1. View all donations");
         System.out.println("2. View monetary donations");
@@ -386,6 +426,8 @@ private void manageDonations() {
 
 // Method to view all donations made by a user
 private void viewAllDonations() {
+        
+        consoleDesign.setColor("magenta");
     System.out.println("Viewing all donations...");
     try {
         List<Donation> donations = donationService.viewAllDonations();
@@ -407,6 +449,7 @@ private void viewAllDonations() {
 
 // Method to view monetary donations made by a user
 private void viewMonetaryDonations() {
+        consoleDesign.setColor("magenta");
     System.out.println("Viewing monetary donations...");
     try {
         List<MonetaryDonation> monetaryDonations = donationService.viewMonetaryDonations();
@@ -428,6 +471,7 @@ private void viewMonetaryDonations() {
 
 // Method to view in-kind donations made by a user
 private void viewInKindDonations() {
+        consoleDesign.setColor("magenta");
     System.out.println("Viewing in-kind donations...");
   
     try {
@@ -451,6 +495,7 @@ private void viewInKindDonations() {
 
 // Method to manage missions
 public void manageMissions() {
+        consoleDesign.setColor("magenta");
     boolean exit = false;
     while (!exit) {
         // Display the mission management menu
@@ -461,6 +506,7 @@ public void manageMissions() {
         System.out.println("4. Update Mission");
         System.out.println("5. Delete Mission");
         System.out.println("6. Go Back");
+        System.out.print("Enter your choice: ");
 
         // Get user's choice
         int choice = scanner.nextInt();
@@ -505,6 +551,7 @@ public void manageMissions() {
 
 // Method to add a new mission
 private void addMission() {
+        consoleDesign.setColor("magenta");
     System.out.println("\nEnter Mission Details:");
 
     System.out.print("Name: ");
@@ -543,6 +590,7 @@ private void addMission() {
 
 // Method to view all missions
 private void viewAllMissions() {
+        consoleDesign.setColor("magenta");
     try {
         List<Mission> missions = missionService.viewAllMissions();
         System.out.println("\nAll Missions:");
@@ -555,7 +603,8 @@ private void viewAllMissions() {
 }
 
 // Method to update an existing mission
-private void updateMission() {
+private void updateMission() {;
+        consoleDesign.setColor("magenta");
     System.out.print("\nEnter Mission ID to Update: ");
     int missionId = scanner.nextInt();
     scanner.nextLine(); // consume newline
@@ -596,6 +645,7 @@ private void updateMission() {
 
 // Method to delete a mission
 private void deleteMission() {
+        consoleDesign.setColor("magenta");
     System.out.print("\nEnter Mission ID to Delete: ");
     int missionId = scanner.nextInt();
     scanner.nextLine(); // consume newline
@@ -610,6 +660,7 @@ private void deleteMission() {
 }
 
 public void addMissionResources() {
+        consoleDesign.setColor("magenta");
     String insertMissionResourcesSql = 
         "INSERT INTO MissionResources (missionid, donationid, resource_type) VALUES (?, ?, ?)";
     String updateMonetaryStatusSql = 

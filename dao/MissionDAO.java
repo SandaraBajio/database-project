@@ -13,10 +13,9 @@ public class MissionDAO {
         this.connection = connection;
     } 
     
-    public void addMission(Mission mission)throws SQLException {
+    public void addMission(Mission mission) throws SQLException {
         String query = "INSERT INTO Mission (name, type, location, status, occurrence_date, operationtype, volunteers_needed) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-
             pstmt.setString(1, mission.getName());
             pstmt.setString(2, mission.getType());
             pstmt.setString(3, mission.getLocation());
@@ -25,32 +24,36 @@ public class MissionDAO {
             pstmt.setString(6, mission.getOperationType());
             pstmt.setInt(7, mission.getVolunteersNeeded());
             pstmt.executeUpdate();
-        
-    }}
+        } catch (SQLException e) {
+            System.err.println("Error adding mission: " + e.getMessage());
+            throw e;  // Rethrow exception for better error handling at higher levels
+        }
+    }
+    
 
     // Add mission resources (change the status of the donation to distributed)
     public void addMissionResources(int missionId, int donationId, String resourceType) {
         String sql = "INSERT INTO MissionResources (missionid, donationid, resource_type) VALUES (?, ?, ?)";
         String updateDonationStatus = "UPDATE MonetaryDonation SET status = 'distributed' WHERE donationid = ?";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             PreparedStatement updateStmt = conn.prepareStatement(updateDonationStatus)) {
-
+    
+        try (PreparedStatement stmt = connection.prepareStatement(sql);
+             PreparedStatement updateStmt = connection.prepareStatement(updateDonationStatus)) {
+    
             // Insert into MissionResources table
             stmt.setInt(1, missionId);
             stmt.setInt(2, donationId);
             stmt.setString(3, resourceType);
             stmt.executeUpdate();
-
+    
             // Update the status of the donation
             updateStmt.setInt(1, donationId);
             updateStmt.executeUpdate();
-
+    
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+    
 
     // View all missions
     public List<Mission> viewAllMissions() {
