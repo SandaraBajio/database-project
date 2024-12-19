@@ -23,36 +23,32 @@ Hi everyone! I am Sandara Bajio, from CS-2102. This is my project in OOP. It is 
 - Objective: Provide real-time support and coordination during emergencies.
 - Target Users: Emergency responders, NGOs, and local government units.
 
-List of Packages: 
-- Package: db
-  -This package is likely responsible for handling data storage and retrieval operations, acting as a simulation of a database for the project.
-  -Classes:
-  -DonationDatabase.java: Manages the storage, retrieval, and updating of donation records.
-  -MissionDatabase.java: Handles mission-related data, such as mission details or progress.
-  -UserDatabase.java: Stores and retrieves user-related data, such as user profiles or login details.
 
-2. Package: entities
-  -This package contains the core data models or entities of the project, representing the main objects the system works with.
-  -Classes:
-  -Donation.java: Represents a donation entity, likely containing fields like amount, donor details, and donation date.
-  -Mission.java: Represents a mission or campaign, possibly with attributes like mission name, description, and status.
-  -User.java: Represents a user entity, including details like username, password, and role.
-  -Volunteer.java: Extends or specializes the User class, likely to include volunteer-specific attributes such as assigned missions or hours worked.
+## List of Packages: 
 
-3. Package: managers
-  -This package provides the logic for managing and interacting with the entities stored in the databases.
-   -Classes:
-   -DonationManager.java: Contains business logic for handling donation operations, such as adding, updating, or deleting donations.
-   -MissionManager.java: Manages the lifecycle of missions, including creation, updates, and assigning volunteers.
-   -UserManager.java: Handles user-related operations like registration, authentication, and role management.
+- **`.vscode`**  
+  Contains editor-specific configurations such as formatting rules or extensions.
 
-4. Package: ui
-   -This package handles the user interface, likely focused on console-based interaction.
-   -Classes:
-   -ConsoleDesign.java: Provides basic methods or templates for designing console outputs, such as headers or formatting.
-   -ConsoleDesignImpl.java: Implements the methods defined in ConsoleDesign.java, providing specific console layouts and designs.
-   -Menu.java: Displays and manages the main menu or navigation flow of the program.
-   -KaagapayMain.java: Serves as the main entry point of the application, where execution begins. It integrates all the other components.
+- **`controllers`**  
+  Manages interactions between the user interface and the backend logic.
+
+- **`dao`**  
+  Handles database operations specific to users, such as CRUD operations.
+
+- **`db`**  
+  Provides functionality for connecting to and managing the database.
+
+- **`main`**  
+  Serves as the entry point of the application.
+
+- **`models`**  
+  Represents the structure and attributes of a user entity in the application.
+
+- **`services`**  
+  Contains the core business logic related to user management.
+
+- **`utils`**  
+  Includes utility methods that can be used across the project.
 
 ---
 
@@ -78,47 +74,258 @@ I utilized the ConsoleDesign interface to define a structured and consistent fra
 ---
 
 ## 🌍 III. Integration with Sustainable Development Goals (SDGs)
-### 🎯 Focused SDG: Goal 11 - Sustainable Cities and Communities
-- **Target 11.5**: Reducing the impact of disasters, particularly for vulnerable populations.
-- **How KAAGAPAY aligns**:
-  - 🗺️ **Mapping & Analytics**: Enhancing resilience through better planning and response.
-  - 📦 **Resource Distribution**: Efficient management of supplies and relief efforts.
+
+### 🎯 Focused SDG: **Goal 11 - Sustainable Cities and Communities**
+
+**Goal 11** aims to make cities inclusive, safe, resilient, and sustainable. KAAGAPAY contributes directly to this objective by leveraging technology to address urban challenges and disaster preparedness.
+
+### ✨ **Target 11.5**  
+**Significantly reduce the number of deaths and the number of people affected by disasters, with a focus on protecting vulnerable populations.**  
+
+### **How KAAGAPAY Aligns with Target 11.5**
+
+#### 🗺️ **Mapping & Analytics**
+- **Objective**: Empower decision-makers with actionable insights for effective urban planning and disaster management.
+- **Features**:
+  - Advanced **geospatial mapping** to identify high-risk zones.
+  - Real-time **disaster analytics** to assess risks and monitor ongoing situations.
+  - Tools to prioritize vulnerable areas during disaster response planning.
+
+#### 📦 **Resource Distribution**
+- **Objective**: Ensure equitable and efficient delivery of resources during crises, minimizing delays and wastage.
+- **Features**:
+  - Smart **inventory management** for tracking supplies like food, water, and medical aid.
+  - Optimized **logistics planning** to reduce transit times and enhance coverage.
+  - Data-driven allocation to ensure resources reach the most affected and vulnerable populations first.
+
+#### 🤝 **Community Resilience Building**
+- **Objective**: Foster long-term resilience through inclusive participation and education.
+- **Features**:
+  - Engagement with local communities to co-develop disaster response strategies.
+  - Workshops and campaigns to raise awareness about disaster preparedness.
+  - Tools for simulation and training exercises to strengthen local capacity.
+
+### **KAAGAPAY’s Broader Impact**
+By integrating these features, KAAGAPAY not only aligns with **Target 11.5** but also contributes to the overarching mission of creating sustainable cities and communities. Its focus on data-driven solutions ensures a proactive approach to urban challenges, enhancing resilience for future generations.
 
 ---
 
-## 🛠️ IV. Instructions for Running the Program
+## 💾 MySQL Database Integration
 
-To run your program in Visual Studio Code (VS Code) using the repository KAAGAPAY, follow these updated steps:
+This project includes integration with a MySQL database using **JDBC**. The database schema and initialization logic are defined in `init.sql`. Below is an overview of the database setup and how it integrates with the application.
 
-Step 1: Install Prerequisites
-Before running the program, ensure you have the necessary tools installed on your system:
+### 📂 **Database Schema Overview**
 
-Install Java Development Kit (JDK): Download and install the JDK from the official Oracle website or use OpenJDK. Ensure Java is installed by running the following command in your terminal: java -version
+The database, `kaagapaydb`, includes the following tables:
 
-Install Visual Studio Code (VS Code):
-Download and install VS Code from the official website.
+1. **Admin**: Stores administrator credentials.
+2. **User**: Contains user details such as name, email, role, and contact information.
+3. **Donation**: Records donations, categorized as `monetary` or `inkind`.
+4. **MonetaryDonation**: Tracks monetary contributions linked to `Donation`.
+5. **InKindDonation**: Tracks in-kind contributions with types and quantities.
+6. **Mission**: Captures disaster missions, their details, and requirements.
+7. **MissionResources**: Maps donations to missions.
+8. **MissionVolunteers**: Assigns volunteers to missions.
 
-After installation, open VS Code.
-Install VS Code Extensions:
+### 📜 **Schema Definition**
 
-Open VS Code, go to Extensions (Ctrl+Shift+X), and install the following extensions:
-Java Extension Pack (includes Language Support for Java(TM) by Red Hat, Debugger for Java, Java Test Runner, and Maven for Java).
+```sql
+-- Database Creation
+CREATE DATABASE kaagapaydb;
+USE kaagapaydb;
 
-Step 2: Clone the Repository
-To clone the repository KAAGAPAY to your local machine:
-Open VS Code and open the integrated terminal (Ctrl+ orView > Terminal`).
-Clone the repository using Git: git clone https://github.com/SandaraBajio/KAAGAPAY.git
-Replace your-username with the actual GitHub username where the repository is hosted.
-Once cloned, navigate to the project directory:cd KAAGAPAY
+-- Admin Table
+CREATE TABLE Admin (
+    email VARCHAR(100) NOT NULL PRIMARY KEY,
+    password VARCHAR(255) NOT NULL
+);
 
-Step 3: Open the Project in VS Code
-Open the KAAGAPAY directory in VS Code: code .
-This will open the project folder in VS Code.
+-- User Table
+CREATE TABLE User (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    firstname VARCHAR(50) NOT NULL,
+    lastname VARCHAR(50) NOT NULL,
+    middlename VARCHAR(50),
+    age INT,
+    phone_number VARCHAR(15),
+    role ENUM('donate', 'volunteer') NOT NULL
+);
 
-Step 4: Set Up the Java Project
-Once inside the VS Code workspace, the Java extension should automatically detect the project.
-If necessary, click on the "Configure Java Runtime" notification that appears and select the appropriate JDK version.
+-- Donation Tables
+CREATE TABLE Donation (
+    donationid INT AUTO_INCREMENT PRIMARY KEY,
+    userid INT NOT NULL,
+    donation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    donation_type ENUM('monetary', 'inkind') NOT NULL,
+    FOREIGN KEY (userid) REFERENCES User(id)
+);
 
-Step 5: Run the Program
-To run the program:
+CREATE TABLE MonetaryDonation (
+    donationid INT PRIMARY KEY,
+    amount DECIMAL(10,2) NOT NULL,
+    donation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('available', 'distributed') DEFAULT 'distributed',
+    FOREIGN KEY (donationid) REFERENCES Donation(donationid)
+);
+
+CREATE TABLE InKindDonation (
+    donationid INT PRIMARY KEY,
+    kindtype ENUM('food', 'clothing', 'medical supplies', 'hygiene products') NOT NULL,
+    units INT NOT NULL,
+    donation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('available', 'distributed') DEFAULT 'distributed',
+    FOREIGN KEY (donationid) REFERENCES Donation(donationid)
+);
+
+-- Mission and Related Tables
+CREATE TABLE Mission (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    type ENUM('EARTHQUAKE', 'TYPHOON', 'FIRE', 'FLOOD', 'VOLCANIC_ERUPTION', 'LANDSLIDE', 'TSUNAMI') NOT NULL,
+    location VARCHAR(100) NOT NULL,
+    status ENUM('ongoing', 'completed') NOT NULL,
+    occurrence_date DATE NOT NULL,
+    operationtype ENUM('rescue operation', 'relief operation') NOT NULL,
+    volunteers_needed INT NOT NULL
+);
+
+CREATE TABLE MissionResources (
+    resourceid INT AUTO_INCREMENT PRIMARY KEY,
+    missionid INT NOT NULL,
+    donationid INT NOT NULL,
+    resource_type ENUM('monetary', 'inkind') NOT NULL,
+    FOREIGN KEY (missionid) REFERENCES Mission(id),
+    FOREIGN KEY (donationid) REFERENCES Donation(donationid)
+);
+
+CREATE TABLE MissionVolunteers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    missionid INT NOT NULL,
+    userid INT NOT NULL,
+    assigned_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (missionid) REFERENCES Mission(id),
+    FOREIGN KEY (userid) REFERENCES User(id)
+);
+```
+
+### 🔗 **JDBC Integration**
+
+- The application uses **JDBC (Java Database Connectivity)** to establish connections and perform operations on `kaagapaydb`.
+- Connection details (e.g., database URL, username, and password) are configured in the application’s settings file, typically `DbConnection.java`.
+
+### 🛠️ **Triggers** 
+  The database includes automated operations using triggers.  
+  - Example: The `after_mission_insert` trigger automatically assigns volunteers to new missions based on the required number of volunteers.
+
+```sql
+DELIMITER //
+
+CREATE TRIGGER after_mission_insert
+AFTER INSERT ON Mission
+FOR EACH ROW
+BEGIN
+    DECLARE counter INT DEFAULT 0;
+    DECLARE volunteers_needed INT;
+
+    SET volunteers_needed = NEW.volunteers_needed;
+
+    WHILE counter < volunteers_needed DO
+        INSERT INTO MissionVolunteers (missionid, userid)
+        VALUES (NEW.id, NULL); 
+        SET counter = counter + 1;
+    END WHILE;
+END;
+//
+
+DELIMITER ;
+```
+
+---
+## 🚀 Instructions to Run the Program
+
+Follow these steps to set up and run the application:
+
+### 1️⃣ **Prerequisites**
+Ensure the following are installed on your system:
+- **Java Development Kit (JDK)** (version 8 or above)
+- **MySQL Server** 
+- A suitable IDE (e.g., IntelliJ IDEA, Eclipse) or a text editor with terminal access.
+
+### 2️⃣ **Database Setup**
+1. **Start MySQL Server**:
+   - Ensure your MySQL server is running. You can start it via terminal or MySQL Workbench.
+
+2. **Create the Database**:
+   - Open your MySQL client or terminal and run the SQL commands in `init.sql` to initialize the database schema and insert dummy data.
+   ```bash
+   mysql -u [username] -p < path/to/init.sql
+
+### 3️⃣ **Building the Project**
+1. **Set up your IDE**:
+   - Open the project in your preferred IDE (e.g., IntelliJ IDEA, Eclipse).
+
+2. **Configure the Project**:
+   - Ensure the MySQL JDBC driver is added to the project’s classpath. You can download the MySQL JDBC driver (Connector/J) from the [official site](https://dev.mysql.com/downloads/connector/j/) or add it to the build path if your IDE supports it.
+   - In your IDE, add the MySQL JDBC JAR file to your project:
+     - **In IntelliJ IDEA**: Go to **Project Structure > Libraries > Add JARs**.
+     - **In Eclipse**: Right-click the project > **Build Path > Add External Archives**.
+
+### 4️⃣ **Run the Program**
+1. **Locate the Main Application**:
+   - In your IDE, find the entry point of the program, typically `Main.java`.
+
+2. **Run the Program**:
+   - **Using IDE**: Right-click `Main.java` and select **Run** to start the program.
+   - **Using Command Line**:
+     - If you need to compile the program manually, use the following command:
+       ```bash
+       javac -cp .:path/to/mysql-connector-java-X.X.X.jar Main.java
+       ```
+     - To run the program:
+       ```bash
+       java -cp .:path/to/mysql-connector-java-X.X.X.jar Main
+       ```
+
+### 5️⃣ **Access the Application**
+- **Command-line Interface**: After running the program, follow the on-screen prompts to interact with the system, such as creating users, making donations, assigning volunteers, and managing missions.
+  - For example, you'll be prompted to log in as an Admin or User and perform tasks such as:
+    - Registering a new user
+    - Making a monetary or in-kind donation
+    - Assigning volunteers to missions
+
+### 6️⃣ **Verify Database Operations**
+- **Check MySQL Database**:
+   - Open MySQL Workbench or any MySQL client.
+   - Verify that the data is being inserted into the `kaagapaydb` database, including the `Admin`, `User`, `Donation`, `Mission`, and other tables.
+   - Run the following query to check the inserted data:
+     ```sql
+     SELECT * FROM User;
+     SELECT * FROM Donation;
+     ```
+
+### 🔧 **Troubleshooting**
+
+1. **Database Connection Issues**:
+   - Ensure that your MySQL service is running and accessible.
+   - Double-check the `DbConnection.java` file for correct database credentials (username, password, and database URL).
+   - Test the connection directly via MySQL command line or MySQL Workbench using the credentials provided in `DbConnection.java` to ensure the database is accessible.
+
+2. **JDBC Driver Issues**:
+   - Ensure the MySQL JDBC driver (`mysql-connector-java-X.X.X.jar`) is correctly added to the classpath.
+   - If you're running the program via the command line, ensure you’re specifying the correct path to the JDBC driver JAR file.
+
+3. **Build Errors**:
+   - If compilation fails, check for any missing files or misconfigured paths in your IDE or terminal.
+   - Ensure that you have the correct Java version installed and configured for your IDE or terminal.
+
+4. **MySQL Errors**:
+   - If you encounter errors like "Unknown database", ensure you’ve created the database using the SQL script provided in `init.sql`.
+   - If there are any SQL errors, check the syntax in the `init.sql` file for accuracy.
+
+### ✅ **Ready to Use!**
+Once you’ve completed these steps, the program should be up and running. You can now start testing the features like user registration, donation management, and mission assignments!
+
+If you encounter any issues, please check the troubleshooting section or refer to the application logs for further details.
 
